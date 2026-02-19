@@ -29,13 +29,14 @@ npm run dev
 - [x] Before/After 분할 슬라이더 비교
 - [x] polygon 하이라이트 렌더링 (기준/비교 공종 동시 표시 토글)
 - [x] imageTransform 기반 정렬 1차 적용 (relativeTo 일치 시 x/y + 회전/스케일)
+- [x] 수동 정렬 캘리브레이션 (X/Y 오프셋, 스케일, 회전, Reset)
 
 ## 미완성 기능 (확장 과제)
 > 핵심 요구사항(탐색/표시/컨텍스트)은 구현 완료했습니다.  
 > 아래 항목은 정확도/편의성 고도화를 위한 확장 과제입니다.
 
-- [ ] imageTransform의 도면별 기준 좌표계 차이를 완전 흡수하는 정밀 정렬 엔진
-  - 현재 상태: `relativeTo` 일치 조건에서 x/y + 회전/스케일 1차 정렬 적용
+- [ ] imageTransform의 도면별 기준 좌표계 차이를 완전 흡수하는 자동 정밀 정렬 엔진
+  - 현재 상태: `relativeTo` 일치 조건 1차 정렬 + 수동 캘리브레이션 제공
 - [ ] polygonTransform + imageTransform을 통합한 고정밀 렌더링
   - 현재 상태: polygon 하이라이트 렌더링 및 기준/비교 동시 표시 지원
 - [ ] 리비전 간 자동 diff 시각화(변경 영역 마스킹/강조)

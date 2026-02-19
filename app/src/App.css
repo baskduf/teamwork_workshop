@@ -73,6 +73,22 @@ input[type='range'] {
   color: #64748b;
 }
 
+.calibBox {
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.resetBtn {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
 .context p {
   margin: 8px 0 0;
   color: #334155;

@@ -103,6 +103,10 @@ function App() {
   const [beforeAfterMode, setBeforeAfterMode] = useState(false)
   const [splitPosition, setSplitPosition] = useState(50)
   const [showComparePolygon, setShowComparePolygon] = useState(false)
+  const [calibDx, setCalibDx] = useState(0)
+  const [calibDy, setCalibDy] = useState(0)
+  const [calibScale, setCalibScale] = useState(1)
+  const [calibRotationDeg, setCalibRotationDeg] = useState(0)
   const [imgSize, setImgSize] = useState({ width: 1000, height: 700 })
 
   useEffect(() => {
@@ -196,7 +200,12 @@ function App() {
     selectedSecondaryRevisionData?.image || secondaryDisciplineData?.image || currentDrawing?.image
 
   const overlayTransform = selectedSecondaryRevisionData?.imageTransform || secondaryDisciplineData?.imageTransform
-  const overlayStyle = getTransformStyle(overlayTransform, baseImage, overlayOpacity)
+  const baseOverlayStyle = getTransformStyle(overlayTransform, baseImage, overlayOpacity)
+  const calibrationTransform = ` translate(${calibDx}px, ${calibDy}px) rotate(${(calibRotationDeg * Math.PI) / 180}rad) scale(${calibScale})`
+  const overlayStyle = {
+    ...baseOverlayStyle,
+    transform: `${(baseOverlayStyle as { transform?: string }).transform ?? ''}${calibrationTransform}`.trim(),
+  }
 
   const currentPolygon: PolygonData | undefined =
     (selectedRegion && currentDiscipline?.regions?.[selectedRegion]?.polygon) ||
@@ -298,6 +307,11 @@ function App() {
             </p>
           </>
         )}
+        {compareMode && (
+          <p>
+            캘리브레이션: dx {calibDx}px / dy {calibDy}px / scale {calibScale.toFixed(2)} / rot {calibRotationDeg}°
+          </p>
+        )}
       </section>
 
       <section className="panel compare">
@@ -378,8 +392,40 @@ function App() {
               비교 공종 polygon 함께 보기
             </label>
 
+            <div className="calibBox">
+              <strong>정렬 캘리브레이션</strong>
+              <label>
+                X 오프셋 ({calibDx}px)
+                <input type="range" min={-300} max={300} value={calibDx} onChange={(e) => setCalibDx(Number(e.target.value))} />
+              </label>
+              <label>
+                Y 오프셋 ({calibDy}px)
+                <input type="range" min={-300} max={300} value={calibDy} onChange={(e) => setCalibDy(Number(e.target.value))} />
+              </label>
+              <label>
+                추가 스케일 ({calibScale.toFixed(2)})
+                <input type="range" min={0.7} max={1.3} step={0.01} value={calibScale} onChange={(e) => setCalibScale(Number(e.target.value))} />
+              </label>
+              <label>
+                추가 회전 ({calibRotationDeg}°)
+                <input type="range" min={-15} max={15} step={1} value={calibRotationDeg} onChange={(e) => setCalibRotationDeg(Number(e.target.value))} />
+              </label>
+              <button
+                type="button"
+                className="resetBtn"
+                onClick={() => {
+                  setCalibDx(0)
+                  setCalibDy(0)
+                  setCalibScale(1)
+                  setCalibRotationDeg(0)
+                }}
+              >
+                Reset to metadata
+              </button>
+            </div>
+
             <p className="hint">
-              정렬 규칙: relativeTo가 기준 이미지와 같을 때 x/y 평행이동 + 회전/스케일을 적용합니다.
+              정렬 규칙: relativeTo가 기준 이미지와 같을 때 x/y 평행이동 + 회전/스케일을 적용하고, 캘리브레이션 값을 추가 반영합니다.
             </p>
           </div>
         )}
