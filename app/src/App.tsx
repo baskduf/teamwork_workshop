@@ -228,6 +228,22 @@ function App() {
     ? `translate(${comparePolyTf.x} ${comparePolyTf.y}) rotate(${(comparePolyTf.rotation * 180) / Math.PI}) scale(${comparePolyTf.scale}) translate(${-comparePolyTf.x} ${-comparePolyTf.y})`
     : undefined
 
+  const compareAlignTransform = (() => {
+    const REF_X = 2481
+    const REF_Y = 1754
+
+    // 기본은 수동 캘리브레이션만 적용
+    if (!overlayTransform || !baseImage || overlayTransform.relativeTo !== baseImage) {
+      return `translate(${calibDx} ${calibDy}) translate(${REF_X} ${REF_Y}) rotate(${calibRotationDeg}) scale(${calibScale}) translate(${-REF_X} ${-REF_Y})`
+    }
+
+    const dx = overlayTransform.x - REF_X + calibDx
+    const dy = overlayTransform.y - REF_Y + calibDy
+    const deg = (overlayTransform.rotation * 180) / Math.PI + calibRotationDeg
+    const sc = overlayTransform.scale * calibScale
+    return `translate(${dx} ${dy}) translate(${overlayTransform.x} ${overlayTransform.y}) rotate(${deg}) scale(${sc}) translate(${-overlayTransform.x} ${-overlayTransform.y})`
+  })()
+
   if (!metadata) {
     return <main className="container">데이터 로딩 중...</main>
   }
@@ -450,7 +466,11 @@ function App() {
               >
                 {polygonPoints && <polygon className="base-poly" points={polygonPoints} transform={polygonTransform} />}
                 {showComparePolygon && comparePolygonPoints && (
-                  <polygon className="compare-poly" points={comparePolygonPoints} transform={comparePolygonTransform} />
+                  <polygon
+                    className="compare-poly"
+                    points={comparePolygonPoints}
+                    transform={`${comparePolygonTransform ?? ''} ${compareAlignTransform}`.trim() || undefined}
+                  />
                 )}
               </svg>
             )}
