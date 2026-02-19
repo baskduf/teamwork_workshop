@@ -47,12 +47,17 @@ npm run dev
 ## 폴더 구조
 ```text
 teamwork_workshop/
-  data/
-    metadata.json
-    drawings/*
-  app/
-    src/*
-  DESIGN.md
+├─ data/
+│  ├─ metadata.json
+│  └─ drawings/
+├─ app/
+│  ├─ src/
+│  ├─ public/
+│  └─ package.json
+├─ DESIGN.md
+├─ README.md
+├─ package.json
+└─ package-lock.json
 ```
 
 ## 설계 문서
