@@ -1,12 +1,21 @@
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 
+type ImageTransform = {
+  relativeTo?: string
+  x: number
+  y: number
+  scale: number
+  rotation: number
+}
+
 type Revision = {
   version: string
   image: string
   date: string
   description: string
   changes: string[]
+  imageTransform?: ImageTransform
 }
 
 type Region = {
@@ -16,6 +25,7 @@ type Region = {
 
 type DisciplineData = {
   image?: string
+  imageTransform?: ImageTransform
   revisions?: Revision[]
   regions?: Record<string, Region>
 }
@@ -39,6 +49,23 @@ function getRevisionList(discipline?: DisciplineData, regionName?: string) {
     return discipline.regions[regionName].revisions
   }
   return discipline.revisions ?? []
+}
+
+function getTransformStyle(
+  overlay: ImageTransform | undefined,
+  baseImageName: string | undefined,
+  overlayOpacity: number,
+) {
+  const fallback = { opacity: overlayOpacity / 100 }
+  if (!overlay || !baseImageName || !overlay.relativeTo) return fallback
+
+  if (overlay.relativeTo !== baseImageName) return fallback
+
+  return {
+    opacity: overlayOpacity / 100,
+    transformOrigin: `${overlay.x}px ${overlay.y}px`,
+    transform: `translate(0px, 0px) rotate(${overlay.rotation}rad) scale(${overlay.scale})`,
+  }
 }
 
 function App() {
@@ -142,6 +169,9 @@ function App() {
   const baseImage = selectedRevisionData?.image || currentDiscipline?.image || currentDrawing?.image
   const overlayImage =
     selectedSecondaryRevisionData?.image || secondaryDisciplineData?.image || currentDrawing?.image
+
+  const overlayTransform = selectedSecondaryRevisionData?.imageTransform || secondaryDisciplineData?.imageTransform
+  const overlayStyle = getTransformStyle(overlayTransform, baseImage, overlayOpacity)
 
   if (!metadata) {
     return <main className="container">데이터 로딩 중...</main>
@@ -270,6 +300,9 @@ function App() {
                 onChange={(e) => setOverlayOpacity(Number(e.target.value))}
               />
             </label>
+            <p className="hint">
+              정렬 규칙: 비교 도면의 imageTransform.relativeTo가 현재 기준 이미지와 같을 때 회전/스케일을 적용합니다.
+            </p>
           </div>
         )}
       </section>
@@ -283,7 +316,7 @@ function App() {
                 className="overlay"
                 src={`/data/drawings/${overlayImage}`}
                 alt={overlayImage}
-                style={{ opacity: overlayOpacity / 100 }}
+                style={overlayStyle}
               />
             )}
           </div>
