@@ -16,16 +16,28 @@ type Revision = {
   description: string
   changes: string[]
   imageTransform?: ImageTransform
+  polygon?: PolygonData
+}
+
+type PolygonData = {
+  vertices: [number, number][]
+  polygonTransform?: {
+    x: number
+    y: number
+    scale: number
+    rotation: number
+  }
 }
 
 type Region = {
-  polygon?: unknown
+  polygon?: PolygonData
   revisions: Revision[]
 }
 
 type DisciplineData = {
   image?: string
   imageTransform?: ImageTransform
+  polygon?: PolygonData
   revisions?: Revision[]
   regions?: Record<string, Region>
 }
@@ -79,6 +91,7 @@ function App() {
   const [secondaryDiscipline, setSecondaryDiscipline] = useState('')
   const [secondaryRevision, setSecondaryRevision] = useState('')
   const [overlayOpacity, setOverlayOpacity] = useState(55)
+  const [imgSize, setImgSize] = useState({ width: 1000, height: 700 })
 
   useEffect(() => {
     fetch('/data/metadata.json')
@@ -172,6 +185,17 @@ function App() {
 
   const overlayTransform = selectedSecondaryRevisionData?.imageTransform || secondaryDisciplineData?.imageTransform
   const overlayStyle = getTransformStyle(overlayTransform, baseImage, overlayOpacity)
+
+  const currentPolygon: PolygonData | undefined =
+    (selectedRegion && currentDiscipline?.regions?.[selectedRegion]?.polygon) ||
+    selectedRevisionData?.polygon ||
+    currentDiscipline?.polygon
+
+  const polygonPoints = currentPolygon?.vertices?.map(([x, y]) => `${x},${y}`).join(' ') ?? ''
+  const polyTf = currentPolygon?.polygonTransform
+  const polygonTransform = polyTf
+    ? `translate(${polyTf.x} ${polyTf.y}) rotate(${(polyTf.rotation * 180) / Math.PI}) scale(${polyTf.scale}) translate(${-polyTf.x} ${-polyTf.y})`
+    : undefined
 
   if (!metadata) {
     return <main className="container">데이터 로딩 중...</main>
@@ -310,7 +334,23 @@ function App() {
       <section className="panel viewer">
         {baseImage ? (
           <div className="viewerStack">
-            <img src={`/data/drawings/${baseImage}`} alt={baseImage} />
+            <img
+              src={`/data/drawings/${baseImage}`}
+              alt={baseImage}
+              onLoad={(e) => {
+                const img = e.currentTarget
+                setImgSize({ width: img.naturalWidth, height: img.naturalHeight })
+              }}
+            />
+            {polygonPoints && (
+              <svg
+                className="polygon-layer"
+                viewBox={`0 0 ${imgSize.width} ${imgSize.height}`}
+                preserveAspectRatio="xMidYMid meet"
+              >
+                <polygon points={polygonPoints} transform={polygonTransform} />
+              </svg>
+            )}
             {compareMode && overlayImage && (
               <img
                 className="overlay"
