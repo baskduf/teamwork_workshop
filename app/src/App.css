@@ -131,6 +131,16 @@ input[type='range'] {
   object-fit: contain;
 }
 
+.overlay-group {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.compare-layer {
+  will-change: transform;
+}
+
 .split-line {
   position: absolute;
   top: 0;
