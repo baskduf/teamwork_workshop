@@ -91,6 +91,8 @@ function App() {
   const [secondaryDiscipline, setSecondaryDiscipline] = useState('')
   const [secondaryRevision, setSecondaryRevision] = useState('')
   const [overlayOpacity, setOverlayOpacity] = useState(55)
+  const [beforeAfterMode, setBeforeAfterMode] = useState(false)
+  const [splitPosition, setSplitPosition] = useState(50)
   const [imgSize, setImgSize] = useState({ width: 1000, height: 700 })
 
   useEffect(() => {
@@ -324,6 +326,29 @@ function App() {
                 onChange={(e) => setOverlayOpacity(Number(e.target.value))}
               />
             </label>
+
+            <label className="inline">
+              <input
+                type="checkbox"
+                checked={beforeAfterMode}
+                onChange={(e) => setBeforeAfterMode(e.target.checked)}
+              />
+              Before/After 슬라이더 모드
+            </label>
+
+            {beforeAfterMode && (
+              <label>
+                비교 슬라이더 ({splitPosition}%)
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={splitPosition}
+                  onChange={(e) => setSplitPosition(Number(e.target.value))}
+                />
+              </label>
+            )}
+
             <p className="hint">
               정렬 규칙: 비교 도면의 imageTransform.relativeTo가 현재 기준 이미지와 같을 때 회전/스케일을 적용합니다.
             </p>
@@ -352,13 +377,25 @@ function App() {
               </svg>
             )}
             {compareMode && overlayImage && (
-              <img
-                className="overlay"
-                src={`/data/drawings/${overlayImage}`}
-                alt={overlayImage}
-                style={overlayStyle}
-              />
+              beforeAfterMode ? (
+                <div className="overlay-clip" style={{ width: `${splitPosition}%` }}>
+                  <img
+                    className="overlay"
+                    src={`/data/drawings/${overlayImage}`}
+                    alt={overlayImage}
+                    style={overlayStyle}
+                  />
+                </div>
+              ) : (
+                <img
+                  className="overlay"
+                  src={`/data/drawings/${overlayImage}`}
+                  alt={overlayImage}
+                  style={overlayStyle}
+                />
+              )
             )}
+            {compareMode && beforeAfterMode && <div className="split-line" style={{ left: `${splitPosition}%` }} />}
           </div>
         ) : (
           <p>선택한 조건에 맞는 도면 이미지가 없습니다.</p>
