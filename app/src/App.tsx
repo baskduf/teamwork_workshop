@@ -85,6 +85,10 @@ function getTransformStyle(
   }
 }
 
+function toDrawingSrc(filename: string) {
+  return `/data/drawings/${encodeURIComponent(filename)}`
+}
+
 function App() {
   const [metadata, setMetadata] = useState<Metadata | null>(null)
   const [selectedDrawingId, setSelectedDrawingId] = useState('01')
@@ -385,7 +389,7 @@ function App() {
         {baseImage ? (
           <div className="viewerStack">
             <img
-              src={`/data/drawings/${baseImage}`}
+              src={toDrawingSrc(baseImage)}
               alt={baseImage}
               onLoad={(e) => {
                 const img = e.currentTarget
@@ -409,7 +413,7 @@ function App() {
                 <div className="overlay-clip" style={{ width: `${splitPosition}%` }}>
                   <img
                     className="overlay"
-                    src={`/data/drawings/${overlayImage}`}
+                    src={toDrawingSrc(overlayImage)}
                     alt={overlayImage}
                     style={overlayStyle}
                   />
@@ -417,7 +421,7 @@ function App() {
               ) : (
                 <img
                   className="overlay"
-                  src={`/data/drawings/${overlayImage}`}
+                  src={toDrawingSrc(overlayImage)}
                   alt={overlayImage}
                   style={overlayStyle}
                 />
