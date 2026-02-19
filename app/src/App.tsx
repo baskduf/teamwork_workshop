@@ -70,13 +70,18 @@ function getTransformStyle(
 ) {
   const fallback = { opacity: overlayOpacity / 100 }
   if (!overlay || !baseImageName || !overlay.relativeTo) return fallback
-
   if (overlay.relativeTo !== baseImageName) return fallback
+
+  // 데이터셋 기준 앵커(대부분 2481, 1754 근처)를 기준으로 평행이동 보정
+  const REF_X = 2481
+  const REF_Y = 1754
+  const dx = overlay.x - REF_X
+  const dy = overlay.y - REF_Y
 
   return {
     opacity: overlayOpacity / 100,
     transformOrigin: `${overlay.x}px ${overlay.y}px`,
-    transform: `translate(0px, 0px) rotate(${overlay.rotation}rad) scale(${overlay.scale})`,
+    transform: `translate(${dx}px, ${dy}px) rotate(${overlay.rotation}rad) scale(${overlay.scale})`,
   }
 }
 
@@ -350,7 +355,7 @@ function App() {
             )}
 
             <p className="hint">
-              정렬 규칙: 비교 도면의 imageTransform.relativeTo가 현재 기준 이미지와 같을 때 회전/스케일을 적용합니다.
+              정렬 규칙: relativeTo가 기준 이미지와 같을 때 x/y 평행이동 + 회전/스케일을 적용합니다.
             </p>
           </div>
         )}

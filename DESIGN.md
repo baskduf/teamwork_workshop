@@ -78,6 +78,7 @@
 ### 개선 방안(시간이 더 있다면)
 1. transform 엔진 적용
    - imageTransform(scale/rotation/x/y) 반영 오버레이
+   - 현재는 relativeTo 일치 시 x/y + 회전/스케일을 적용하는 1차 정렬까지 구현
 2. polygon 시각화
    - region 관심영역 하이라이트
 3. 리비전 비교 고도화
