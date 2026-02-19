@@ -1,12 +1,16 @@
 # 건설 도면 탐색 인터페이스 프로토타입
 
+건설 도면 메타데이터(`metadata.json`)를 기반으로,
+사용자가 **공간 → 공종 → 영역(Region) → 리비전** 순서로 원하는 도면에 빠르게 도달할 수 있도록 만든 UI 프로토타입입니다.
+
 ## 실행 방법
 ```bash
 npm install
 npm run dev
 ```
 
-> 내부적으로 `app/`(React + TypeScript + Vite)에서 실행됩니다.
+- 기본 로컬 주소: `http://localhost:4173` (환경에 따라 5173)
+- 내부적으로 `app/`(React + TypeScript + Vite)에서 실행됩니다.
 
 ## 기술 스택
 - React 19
@@ -22,12 +26,15 @@ npm run dev
 - [x] 현재 컨텍스트(건물/공종/영역/리비전) 표시
 - [x] 리비전 설명/변경사항 표시
 - [x] 비교/오버레이 모드 (공종/리비전 + 투명도)
+- [x] Before/After 분할 슬라이더 비교
+- [x] polygon 하이라이트 렌더링 (기준/비교 공종 동시 표시 토글)
+- [x] imageTransform 기반 정렬 1차 적용 (relativeTo 일치 시 x/y + 회전/스케일)
 
 ## 미완성 기능
-- [ ] imageTransform/rotation/scale을 이용한 정확한 도면 정렬
-- [ ] polygon/region 하이라이트 렌더링
-- [ ] 리비전 간 시각적 diff(변경점 자동 강조)
-- [ ] 검색(자연어/키워드) 및 최근 조회 히스토리
+- [ ] imageTransform의 도면별 기준 좌표계 차이를 완전 흡수하는 정밀 정렬 엔진
+- [ ] polygonTransform + imageTransform을 통합한 고정밀 렌더링
+- [ ] 리비전 간 자동 diff 시각화(변경 영역 마스킹/강조)
+- [ ] 검색(자연어/키워드), 즐겨찾기, 최근 조회 히스토리
 
 ## 폴더 구조
 ```text
@@ -39,3 +46,6 @@ teamwork_workshop/
     src/*
   DESIGN.md
 ```
+
+## 설계 문서
+UI 설계 의사결정, 데이터 해석, 대안 비교, 미해결 과제는 `DESIGN.md`에 정리했습니다.
