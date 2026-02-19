@@ -43,6 +43,17 @@ body {
   gap: 12px;
 }
 
+.compareStack {
+  display: grid;
+  gap: 12px;
+}
+
+.toggleRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
 label {
   display: grid;
   gap: 8px;

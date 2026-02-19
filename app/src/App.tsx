@@ -326,50 +326,63 @@ function App() {
         </label>
 
         {compareMode && (
-          <div className="compareGrid">
-            <label>
-              비교 공종
-              <select value={secondaryDiscipline} onChange={(e) => setSecondaryDiscipline(e.target.value)}>
-                {disciplineNames.map((name) => (
-                  <option key={name} value={name}>
-                    {name}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            {secondaryRevisionList.length > 0 && (
+          <div className="compareStack">
+            <div className="compareGrid">
               <label>
-                비교 리비전
-                <select value={secondaryRevision} onChange={(e) => setSecondaryRevision(e.target.value)}>
-                  {secondaryRevisionList.map((rev) => (
-                    <option key={rev.version} value={rev.version}>
-                      {rev.version} ({rev.date})
+                비교 공종
+                <select value={secondaryDiscipline} onChange={(e) => setSecondaryDiscipline(e.target.value)}>
+                  {disciplineNames.map((name) => (
+                    <option key={name} value={name}>
+                      {name}
                     </option>
                   ))}
                 </select>
               </label>
-            )}
 
-            <label>
-              오버레이 투명도 ({overlayOpacity}%)
-              <input
-                type="range"
-                min={10}
-                max={100}
-                value={overlayOpacity}
-                onChange={(e) => setOverlayOpacity(Number(e.target.value))}
-              />
-            </label>
+              {secondaryRevisionList.length > 0 && (
+                <label>
+                  비교 리비전
+                  <select value={secondaryRevision} onChange={(e) => setSecondaryRevision(e.target.value)}>
+                    {secondaryRevisionList.map((rev) => (
+                      <option key={rev.version} value={rev.version}>
+                        {rev.version} ({rev.date})
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
 
-            <label className="inline">
-              <input
-                type="checkbox"
-                checked={beforeAfterMode}
-                onChange={(e) => setBeforeAfterMode(e.target.checked)}
-              />
-              Before/After 슬라이더 모드
-            </label>
+              <label>
+                오버레이 투명도 ({overlayOpacity}%)
+                <input
+                  type="range"
+                  min={10}
+                  max={100}
+                  value={overlayOpacity}
+                  onChange={(e) => setOverlayOpacity(Number(e.target.value))}
+                />
+              </label>
+            </div>
+
+            <div className="toggleRow">
+              <label className="inline">
+                <input
+                  type="checkbox"
+                  checked={beforeAfterMode}
+                  onChange={(e) => setBeforeAfterMode(e.target.checked)}
+                />
+                Before/After 슬라이더
+              </label>
+
+              <label className="inline">
+                <input
+                  type="checkbox"
+                  checked={showComparePolygon}
+                  onChange={(e) => setShowComparePolygon(e.target.checked)}
+                />
+                비교 polygon
+              </label>
+            </div>
 
             {beforeAfterMode && (
               <label>
@@ -384,33 +397,26 @@ function App() {
               </label>
             )}
 
-            <label className="inline">
-              <input
-                type="checkbox"
-                checked={showComparePolygon}
-                onChange={(e) => setShowComparePolygon(e.target.checked)}
-              />
-              비교 공종 polygon 함께 보기
-            </label>
-
             <div className="calibBox">
               <strong>정렬 캘리브레이션</strong>
-              <label>
-                X 오프셋 ({calibDx}px)
-                <input type="range" min={-300} max={300} value={calibDx} onChange={(e) => setCalibDx(Number(e.target.value))} />
-              </label>
-              <label>
-                Y 오프셋 ({calibDy}px)
-                <input type="range" min={-300} max={300} value={calibDy} onChange={(e) => setCalibDy(Number(e.target.value))} />
-              </label>
-              <label>
-                추가 스케일 ({calibScale.toFixed(2)})
-                <input type="range" min={0.7} max={1.3} step={0.01} value={calibScale} onChange={(e) => setCalibScale(Number(e.target.value))} />
-              </label>
-              <label>
-                추가 회전 ({calibRotationDeg}°)
-                <input type="range" min={-15} max={15} step={1} value={calibRotationDeg} onChange={(e) => setCalibRotationDeg(Number(e.target.value))} />
-              </label>
+              <div className="compareGrid">
+                <label>
+                  X 오프셋 ({calibDx}px)
+                  <input type="range" min={-300} max={300} value={calibDx} onChange={(e) => setCalibDx(Number(e.target.value))} />
+                </label>
+                <label>
+                  Y 오프셋 ({calibDy}px)
+                  <input type="range" min={-300} max={300} value={calibDy} onChange={(e) => setCalibDy(Number(e.target.value))} />
+                </label>
+                <label>
+                  추가 스케일 ({calibScale.toFixed(2)})
+                  <input type="range" min={0.7} max={1.3} step={0.01} value={calibScale} onChange={(e) => setCalibScale(Number(e.target.value))} />
+                </label>
+                <label>
+                  추가 회전 ({calibRotationDeg}°)
+                  <input type="range" min={-15} max={15} step={1} value={calibRotationDeg} onChange={(e) => setCalibRotationDeg(Number(e.target.value))} />
+                </label>
+              </div>
               <button
                 type="button"
                 className="resetBtn"
@@ -421,12 +427,12 @@ function App() {
                   setCalibRotationDeg(0)
                 }}
               >
-                Reset to metadata
+                Reset
               </button>
             </div>
 
             <p className="hint">
-              정렬 규칙: relativeTo가 기준 이미지와 같을 때 x/y 평행이동 + 회전/스케일을 적용하고, 캘리브레이션 값을 추가 반영합니다.
+              relativeTo 일치 시 자동 정렬(imageTransform) + 수동 캘리브레이션을 함께 적용합니다.
             </p>
           </div>
         )}
