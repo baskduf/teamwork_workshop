@@ -98,6 +98,7 @@ function App() {
   const [overlayOpacity, setOverlayOpacity] = useState(55)
   const [beforeAfterMode, setBeforeAfterMode] = useState(false)
   const [splitPosition, setSplitPosition] = useState(50)
+  const [showComparePolygon, setShowComparePolygon] = useState(false)
   const [imgSize, setImgSize] = useState({ width: 1000, height: 700 })
 
   useEffect(() => {
@@ -202,6 +203,16 @@ function App() {
   const polyTf = currentPolygon?.polygonTransform
   const polygonTransform = polyTf
     ? `translate(${polyTf.x} ${polyTf.y}) rotate(${(polyTf.rotation * 180) / Math.PI}) scale(${polyTf.scale}) translate(${-polyTf.x} ${-polyTf.y})`
+    : undefined
+
+  const comparePolygon: PolygonData | undefined =
+    (selectedRegion && secondaryDisciplineData?.regions?.[selectedRegion]?.polygon) ||
+    selectedSecondaryRevisionData?.polygon ||
+    secondaryDisciplineData?.polygon
+  const comparePolygonPoints = comparePolygon?.vertices?.map(([x, y]) => `${x},${y}`).join(' ') ?? ''
+  const comparePolyTf = comparePolygon?.polygonTransform
+  const comparePolygonTransform = comparePolyTf
+    ? `translate(${comparePolyTf.x} ${comparePolyTf.y}) rotate(${(comparePolyTf.rotation * 180) / Math.PI}) scale(${comparePolyTf.scale}) translate(${-comparePolyTf.x} ${-comparePolyTf.y})`
     : undefined
 
   if (!metadata) {
@@ -354,6 +365,15 @@ function App() {
               </label>
             )}
 
+            <label className="inline">
+              <input
+                type="checkbox"
+                checked={showComparePolygon}
+                onChange={(e) => setShowComparePolygon(e.target.checked)}
+              />
+              비교 공종 polygon 함께 보기
+            </label>
+
             <p className="hint">
               정렬 규칙: relativeTo가 기준 이미지와 같을 때 x/y 평행이동 + 회전/스케일을 적용합니다.
             </p>
@@ -372,13 +392,16 @@ function App() {
                 setImgSize({ width: img.naturalWidth, height: img.naturalHeight })
               }}
             />
-            {polygonPoints && (
+            {(polygonPoints || (showComparePolygon && comparePolygonPoints)) && (
               <svg
                 className="polygon-layer"
                 viewBox={`0 0 ${imgSize.width} ${imgSize.height}`}
                 preserveAspectRatio="xMidYMid meet"
               >
-                <polygon points={polygonPoints} transform={polygonTransform} />
+                {polygonPoints && <polygon className="base-poly" points={polygonPoints} transform={polygonTransform} />}
+                {showComparePolygon && comparePolygonPoints && (
+                  <polygon className="compare-poly" points={comparePolygonPoints} transform={comparePolygonTransform} />
+                )}
               </svg>
             )}
             {compareMode && overlayImage && (

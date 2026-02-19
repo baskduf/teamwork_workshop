@@ -133,8 +133,14 @@ input[type='range'] {
   pointer-events: none;
 }
 
-.polygon-layer polygon {
+.polygon-layer .base-poly {
   fill: rgba(59, 130, 246, 0.18);
   stroke: #2563eb;
+  stroke-width: 3;
+}
+
+.polygon-layer .compare-poly {
+  fill: rgba(239, 68, 68, 0.18);
+  stroke: #dc2626;
   stroke-width: 3;
 }
